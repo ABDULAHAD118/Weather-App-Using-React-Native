@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 interface Params {
-    cityNme: string;
+    cityName: string;
     days?: number;
 }
 
@@ -14,8 +14,8 @@ interface ApiCallOptions {
     url: string;
 }
 
-const forecastEndPoint = (params: Params): string => `https://api.weatherapi.com/v1/forecast.json?key=${process.env.API_KEY}&q=${params.cityNme}&days=${params.days}&aqi=no&alerts=no`;
-const locationEndPoint = (params: Params): string => `https://api.weatherapi.com/v1/search.json?key=${process.env.API_KEY}&q=${params.cityNme}`;
+const forecastEndPoint = (params: Params): string => `https://api.weatherapi.com/v1/forecast.json?key=${process.env.EXPO_PUBLIC_API_KEY}&q=${params.cityName}&days=${params.days}&aqi=no&alerts=no`;
+const locationEndPoint = (params: Params): string => `https://api.weatherapi.com/v1/search.json?key=${process.env.EXPO_PUBLIC_API_KEY}&q=${params.cityName}`;
 
 const apiCall = async (endPoint: string): Promise<ApiResponse | null> => {
     const option: ApiCallOptions = {
