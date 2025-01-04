@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Image, SafeAreaView, TextInput, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Image, SafeAreaView, TextInput, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
 import React, { useCallback, useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { Colors } from '@/constants/Colors';
@@ -19,6 +19,7 @@ export default function HomeScreen() {
         name: string;
         country: string;
     }
+    const height = Dimensions.get('window').height;
 
     const handleSearch = (value: string) => {
         if (value.length > 2) {
@@ -68,7 +69,6 @@ export default function HomeScreen() {
     return (
         <View className='flex-1 relative'>
             <StatusBar style='light' />
-            <Text className='text-xl text-center m-3'>Welcome to the Weather App!</Text>
             <Image blurRadius={70} source={require('../assets/images/bg.png')} className='absolute w-full h-full' />
             {
                 loading ? (
@@ -76,8 +76,8 @@ export default function HomeScreen() {
                         <Progress.CircleSnail thickness={5} size={100} color='white' />
                     </View>
                 ) : (
-                    <SafeAreaView className='flex flex-1'>
-                        <View style={{ height: '7%' }} className='mx-4 relative z-50'>
+                    <SafeAreaView className='flex flex-1 mt-12'>
+                        <View style={{ height: 60 }} className='mx-4 relative z-50'>
                             <View className='flex-row justify-end items-center rounded-full' style={{ backgroundColor: showSearch ? Colors.bgWhite(0.2) : 'transparent' }}>
                                 {
                                     showSearch ? (
@@ -107,76 +107,81 @@ export default function HomeScreen() {
                                 ) : null
                             }
                         </View>
-                        <View className='mx-4 flex justify-around flex-1 mb-2'>
-                            <Text className='text-white text-center text-2xl font-bold'>{location?.name},
-                                <Text className='text-lg font-semibold text-gray-300'>
-                                    {location?.country}
-                                </Text>
-                            </Text>
-                            <View className='flex-row justify-center'>
-                                <Image source={weatherImages[current?.condition?.text as keyof typeof weatherImages || 'default']} className='w-48 h-48' />
-                            </View>
-                            <View className=''>
-                                <Text className='p-3 text-center font-bold text-white text-6xl ml-5'>
-                                    {current?.temp_c}&#176;
-                                </Text>
-                                <Text className='text-center  text-white text-xl tracking-widest'>
-                                    {current?.condition?.text}
-                                </Text>
-                            </View>
-                            <View className='flex-row justify-between mx-4'>
-                                <View className='flex-row space-x-2 items-center'>
-                                    <Image source={require('../assets/icons/wind.png')} className='h-6 w-6' />
-                                    <Text className='text-white font-semibold text-base ml-2 '>
-                                        {current?.wind_kph}km
+                        <ScrollView className='flex flex-1' contentContainerStyle={{ justifyContent: 'space-around' }} showsVerticalScrollIndicator={false}>
+                            <View className='flex justify-around' style={{ height: height - 67 }}>
+                                <View className='mx-4'>
+                                    <Text className='text-white text-center text-2xl font-bold'>{location?.name}
+                                        <Text className='text-lg font-semibold text-gray-300'>
+                                            , {location?.country}
+                                        </Text>
                                     </Text>
+                                    <View className='flex-row justify-center my-10'>
+                                        <Image source={weatherImages[current?.condition?.text as keyof typeof weatherImages || 'other']} className='w-48 h-48' />
+                                    </View>
+                                    <View className=''>
+                                        <Text className='p-3 text-center font-bold text-white text-6xl'>
+                                            {current?.temp_c}&#176;
+                                        </Text>
+                                        <Text className='text-center  text-white text-xl tracking-widest my-7'>
+                                            {current?.condition?.text}
+                                        </Text>
+                                    </View>
+                                    <View className='flex-row justify-between mx-4'>
+                                        <View className='flex-row space-x-2 items-center'>
+                                            <Image source={require('../assets/icons/wind.png')} className='h-6 w-6' />
+                                            <Text className='text-white font-semibold text-base ml-2 '>
+                                                {current?.wind_kph}km
+                                            </Text>
+                                        </View>
+                                        <View className='flex-row space-x-2 items-center'>
+                                            <Image source={require('../assets/icons/drop.png')} className='h-6 w-6' />
+                                            <Text className='text-white font-semibold text-base ml-2'>
+                                                {current?.humidity}%
+                                            </Text>
+                                        </View>
+                                        <View className='flex-row space-x-2 items-center'>
+                                            <Image source={require('../assets/icons/sun.png')} className='h-6 w-6' />
+                                            <Text className='text-white font-semibold text-base ml-2'>
+                                                {weather?.forecast?.forecastday?.[0]?.astro?.sunrise}
+                                            </Text>
+                                        </View>
+                                    </View>
                                 </View>
-                                <View className='flex-row space-x-2 items-center'>
-                                    <Image source={require('../assets/icons/drop.png')} className='h-6 w-6' />
-                                    <Text className='text-white font-semibold text-base ml-2'>
-                                        {current?.humidity}%
-                                    </Text>
-                                </View>
-                                <View className='flex-row space-x-2 items-center'>
-                                    <Image source={require('../assets/icons/sun.png')} className='h-6 w-6' />
-                                    <Text className='text-white font-semibold text-base ml-2'>
-                                        {weather?.forecast?.forecastday?.[0]?.astro?.sunrise}
-                                    </Text>
-                                </View>
-                            </View>
-                        </View>
-                        <View className='mb-2 space-y-3'>
-                            <View className='flex-row items-center m-5 '>
-                                <MaterialIcons name='calendar-month' size={22} color={'white'} />
-                                <Text className='text-white text-base'>Daily Forecast</Text>
-                            </View>
-                            <ScrollView horizontal contentContainerStyle={{ paddingHorizontal: 15 }} showsHorizontalScrollIndicator={false}>
+                                <View className='mb-2 space-y-3'>
+                                    <View className='flex-row items-center m-5 '>
+                                        <MaterialIcons name='calendar-month' size={22} color={'white'} />
+                                        <Text className='text-white  ml-2'>Daily Forecast</Text>
+                                    </View>
+                                    <ScrollView horizontal showsHorizontalScrollIndicator={false}>
 
-                                {
-                                    weather?.forecast?.forecastday?.map((day: {
-                                        date?: string;
-                                        day?: {
-                                            condition?: {
-                                                text?: string;
-                                            };
-                                            avgtemp_c?: number;
-                                        };
-                                    }, index: number) => {
-                                        let date = new Date(day?.date || '');
-                                        let options: Intl.DateTimeFormatOptions = { weekday: 'long' };
-                                        let dayName = date.toLocaleDateString('en-US', options);
-                                        dayName.split(',')[0];
-                                        return (
-                                            <View key={index} className='flex justify-center items-center w-24 rounded-3xl py-3 space-y-1 mr-4' style={{ backgroundColor: Colors.bgWhite(0.15) }}>
-                                                <Image source={weatherImages[day?.day?.condition?.text as keyof typeof weatherImages || 'default']} className='h-11 w-11' />
-                                                <Text className='text-center text-white'>{dayName}</Text>
-                                                <Text className='text-center text-white text-xl font-semibold'>{day?.day?.avgtemp_c}&#176;</Text>
-                                            </View>
-                                        )
-                                    })
-                                }
-                            </ScrollView>
-                        </View>
+                                        {
+                                            weather?.forecast?.forecastday?.map((day: {
+                                                date?: string;
+                                                day?: {
+                                                    condition?: {
+                                                        text?: string;
+                                                    };
+                                                    avgtemp_c?: number;
+                                                };
+                                            }, index: number) => {
+                                                let date = new Date(day?.date || '');
+                                                let options: Intl.DateTimeFormatOptions = { weekday: 'long' };
+                                                let dayName = date.toLocaleDateString('en-US', options);
+                                                dayName.split(',')[0];
+                                                return (
+                                                    <View key={index} className='flex justify-center items-center w-32 rounded-2xl py-3 space-y-1 mx-2' style={{ backgroundColor: Colors.bgWhite(0.15) }}>
+                                                        <Image source={weatherImages[day?.day?.condition?.text as keyof typeof weatherImages || 'other']} className='h-11 w-11' />
+                                                        <Text className='text-center text-white'>{dayName}</Text>
+                                                        <Text className='text-center text-white text-xl font-semibold'>{day?.day?.avgtemp_c}&#176;</Text>
+                                                        <Text className='text-center text-white'>{day?.day?.condition?.text}</Text>
+                                                    </View>
+                                                )
+                                            })
+                                        }
+                                    </ScrollView>
+                                </View>
+                            </View>
+                        </ScrollView>
                     </SafeAreaView>
                 )
             }
